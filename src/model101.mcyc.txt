@@ -1,0 +1,31 @@
+model{
+	for(k in 1:ncyc){
+		e1[cyc.start[k]] ~ dlnorm(m1, tau1)
+		C[cyc.start[k]] = (1 - ((Q*delta)/V))*C.initial[k]+(G*G.Ind[cyc.start[k]]*delta/V) + e1[cyc.start[k]]
+		y[cyc.start[k]] ~ dnorm(log(C[cyc.start[k]]), tau2)
+		loglik[cyc.start[k]] = logdensity.norm(y[cyc.start[k]], log(C[cyc.start[k]]), tau2)
+		
+		for(i in cyc.start[k]:(cyc.end[k]-1)){
+			e1[i+1] ~ dlnorm(m1, tau1)
+    			C[i+1] = (1 - ((Q*delta)/V))*C[i]+(G*G.Ind[i+1]*delta/V) + e1[i+1]
+    			y[i+1] ~ dnorm(log(C[i+1]), tau2)
+			loglik[i+1] = logdensity.norm(y[i+1], log(C[i+1]), tau2)
+		}
+	}
+
+	C.initial[1] ~ dlnorm(log(C0), tau2)
+	for(cyc in 2:ncyc){
+		C.initial[cyc] ~ dlnorm(log(C[cyc.end[cyc-1]]*exp(-Q*bglength[cyc-1]/V)), tau2)
+	}
+  
+  	sigma1 = sqrt(1/tau1)
+  	sigma2 = sqrt(1/tau2)
+
+	# priors 
+
+  	G ~ dunif(G.prior[1], G.prior[2])
+  	Q ~ dunif(Q.prior[1], Q.prior[2])
+  	m1 ~ dnorm(m1.prior[1], m1.prior[2])
+  	tau1 ~ dgamma(tau1.prior[1], tau1.prior[2])
+  	tau2 ~ dgamma(tau2.prior[1], tau2.prior[2])
+}

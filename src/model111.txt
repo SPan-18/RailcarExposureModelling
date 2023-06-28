@@ -1,0 +1,38 @@
+model{
+  	for(i in 1:(T.obs-1)){
+		e1[i+1] ~ dlnorm(m1, tau1)
+    		C[i+1] = (1 - ((Q.prime*delta)/V))*C[i]+(G.prime*G.ind[i+1]*delta/V) + e1[i+1]
+    		y[i+1] ~ dnorm(log(C[i+1]), tau2)
+		loglik[i+1] = log(dnorm(y[i+1], log(C[i+1]), tau2))
+		
+  	}
+
+ 	C.0 ~ dlnorm(log(C0), tau2)
+  	e1[1] ~ dlnorm(m1, tau1)
+  	C[1] = (1 - ((Q.prime*delta)/V))*C.0+(G.prime*G.ind[1]*delta/V) + e1[1]
+  	y[1] ~ dnorm(log(C[1]), tau2)
+	loglik[1] = log(dnorm(y[1], log(C[1]), tau2))
+  
+  	sigma1 = sqrt(1/tau1)
+  	sigma2 = sqrt(1/tau2)
+	Q.prime = Q + eLF*QL + eRF*QR
+	G.prime = (1 - eL*eLF)*G
+
+	# priors 
+
+  	G ~ dunif(G.prior[1], G.prior[2])
+
+  	Q ~ dunif(Q.prior[1], Q.prior[2])
+	QL ~ dunif(QL.prior[1], QL.prior[2])
+	QR ~ dunif(QR.prior[1], QR.prior[2])
+
+	eL ~ dunif(eL.prior[1], eL.prior[2])
+	eLF ~ dunif(eLF.prior[1], eLF.prior[2])
+	eRF ~ dunif(eRF.prior[1], eRF.prior[2])
+
+  	m1 ~ dnorm(m1.prior[1], m1.prior[2])
+  	tau1 ~ dgamma(tau1.prior[1], tau1.prior[2])
+  	tau2 ~ dgamma(tau2.prior[1], tau2.prior[2])
+	# var1 ~ dunif(var1.prior[1], var1.prior[2])
+	# var2 ~ dunif(var2.prior[1], var2.prior[2])
+}
