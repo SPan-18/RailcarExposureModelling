@@ -16,5 +16,5 @@ The following instructions will assume installation and use of the \texttt{R} st
 2. Figure showing posterior samples of mechanistic parameters
 3. Figure showing smoothing and forecasting
 
-![Figure 1](https://github.com/SPan-18/RailcarExposureModelling/blob/main/img/post.learn.101.3cyc.pdf?raw=true)
+![Figure 1](fig/post.learn.101.3cyc.pdf?raw=true)
 
