@@ -3,6 +3,7 @@ rm(list = ls())
 library(rjags)
 library(ggplot2)
 library(LaplacesDemon)
+library(gridExtra)
 
 source("../src/functions.R")
 source("../src/sim.111.mcyc.R")
@@ -33,8 +34,8 @@ prior.list = c(list.prior.data,
 
 ##### jags #####
 
-G.init = 100
-Q.init = 10
+G.init = mean(G.prior)
+Q.init = mean(Q.prior)
 QL.init = mean(QL.prior)
 QR.init = mean(QL.prior)
 eL.init = mean(eL.prior)

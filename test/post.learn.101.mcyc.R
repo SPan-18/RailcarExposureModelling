@@ -2,9 +2,9 @@ rm(list = ls())
 
 library(rjags)
 library(LaplacesDemon)
+library(gridExtra)
 
 source("../src/functions.R")
-# source("../src/read-data-car1-aside-1.r")
 source("../src/sim.101.mcyc.R")
 
 ##### Prior parameters #####
@@ -26,8 +26,8 @@ prior.list = c(list.prior.data,
 
 ##### jags #####
 
-G.init = 100
-Q.init = 10
+G.init = mean(G.prior)
+Q.init = mean(Q.prior)
 # C.init = rep(0, length(list.dat$y))
 m1.init = 10
 tau1.init = 1

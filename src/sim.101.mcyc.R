@@ -21,12 +21,6 @@ C.initial = array(dim = ncyc+1)                   # concentrations at cycle ends
 G = 1000             # generation rate (mg/min or count/min)
 V = 100              # volume of the room (m^3)
 Q = 20               # average ventilation rate (m^3/min)
-# Q.L = 5            # local exhaust ventilation rate (m^3/min)
-# Q.R = 5            # room recirculation system ventilation rate (m^3/min)
-# e.L = 0.5          # fraction of the source emissions immediately 
-#                    # captured by the local exhaust
-# e.LF = 0.5         # local exhaust return filtration efficiency
-# e.RF = 0.9         # general ventilation recirculation filtration efficiency
 C0 = 10
 delta = 1
 

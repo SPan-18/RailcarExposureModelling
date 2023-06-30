@@ -94,11 +94,11 @@ pp.Cyc.Ind = input1$Cyc.Ind[!is.na(input1$Conc)]
 pp.G.Ind = input1$G.Ind[!is.na(input1$Conc)]
 
 # priors
-G.prior = c(80, 1500)
-Q.prior = c(15, 100)
+G.prior = c(200, 1800)
+Q.prior = c(3, 50)
 # 
-list.prior.data = list(G.prior = c(80, 1500),
-                       Q.prior = c(3.5, 46))
+list.prior.data = list(G.prior = G.prior,
+                       Q.prior = Q.prior)
 # 
 list.dat = list("y" = pp.Conc,
                 "G.Ind" = pp.G.Ind,

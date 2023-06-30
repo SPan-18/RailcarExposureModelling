@@ -2,6 +2,7 @@ rm(list = ls())
 
 library(rjags)
 library(LaplacesDemon)
+library(gridExtra)
 
 source("../src/functions.R")
 source("../src/read-data.R")
@@ -57,21 +58,18 @@ init.values = list(list(G = G.init,
 
 mod.params = c("G", "Q", "QL", "QR", "eL", "eLF", "eRF", "G.prime", "Q.prime",
                "C", "C.initial", "sigma1", "sigma2", "m1", "loglik",
-               "alpha", "beta"
-               )
+               "alpha", "beta")
 
 target_ns = 5000
 n_chains = 1
-n_burnin = 1000
+n_burnin = 5000
 n_adapt = 500
-n_thin = 10
+n_thin = 50
 n_iter = (target_ns*n_thin)+n_burnin+n_adapt
 
 input.list = c(list.dat, prior.list)
 
-mod1 <- jags.model(
-                   # "../src/model111.mcyc.txt",
-                   "../src/dynvar-model111.mcyc.txt",
+mod1 <- jags.model("../src/dynvar-model111.mcyc.txt",
                    data = input.list,
                    inits = init.values,
                    n.chains = n_chains, 

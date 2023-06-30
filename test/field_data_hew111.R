@@ -2,6 +2,7 @@ rm(list = ls())
 
 library(rjags)
 library(LaplacesDemon)
+library(gridExtra)
 
 source("../src/functions.R")
 source("../src/read-data.r")

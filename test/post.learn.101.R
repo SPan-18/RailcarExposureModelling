@@ -2,6 +2,7 @@ rm(list = ls())
 
 library(R2jags)
 library(LaplacesDemon)
+library(gridExtra)
 
 source("../src/functions.r")
 source("../src/exactsolsim.101.R")
