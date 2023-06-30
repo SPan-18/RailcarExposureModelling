@@ -9,7 +9,7 @@ source("../src/read-data.R")
 
 ##### Prior parameters #####
 
-band = 1
+band = 5
 G.prior = list.prior.data$G.prior       # uniform prior
 Q.prior = list.prior.data$Q.prior       # uniform prior
 # m1.prior = c(0, 1E-2)                 # normal prior
@@ -64,7 +64,7 @@ target_ns = 5000
 n_chains = 1
 n_burnin = 5000
 n_adapt = 500
-n_thin = 50
+n_thin = 10
 n_iter = (target_ns*n_thin)+n_burnin+n_adapt
 
 input.list = c(list.dat, prior.list)

@@ -13,8 +13,23 @@ This repository implements a Bayesian state space modelling framework that synth
 The following instructions will assume installation and use of the \texttt{R} statistical environment and possibly \texttt{RStudio}. Most `.R` files in the `test` directory will produce the following based on both simulated and real experimental data. 
 
 1. Posterior summary of mechanistic as well as statistical parameters
-2. Figure showing posterior samples of mechanistic parameters
-3. Figure showing smoothing and forecasting
 
-![Figure 1](fig/post.learn.101.3cyc.pdf?raw=true)
+|     | Mean |  SD   | 2.5% | 50% | 97.5% |
+|:-----:|:------:|:-------:|:------:|:-----:|:-------:|
+|G    |  819.44 | 112.99 | 585.03 | 822.00 | 1034.10 |
+|Q    |  18.53 |   3.70 | 13.36 | 17.86 | 28.47 |
+|C.0  | 10.14 |  1.77 | 7.13 |  10.01 |  13.98 |
+|sigma1 |  0.28 |  0.13 |  0.14 |  0.25 | 0.64 |
+|sigma2 |  0.19 | 0.02  | 0.15  | 0.19  |  0.24 |
+|m1   |   -1.40 |  1.84 | -5.14 | -1.39 |   1.57 |
+
+2. Figure showing posterior samples of mechanistic parameters
+<p align="center">
+<img src="fig/post.learn.101.1cyc.jpeg" width="35%">
+</p>
+3. Figure showing smoothing and forecasting 
+<p align="center">
+<img src="fig/3cyc.jpeg" width="50%">
+</p>
+
 
