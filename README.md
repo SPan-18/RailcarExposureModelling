@@ -21,7 +21,7 @@ The following instructions will assume installation and use of the R statistical
 
 2. Figure showing posterior samples of mechanistic parameters
 <p align="center">
-<img src="fig/post.learn.101.1cyc.jpeg" width="30%">
+<img src="fig/post.learn.101.1cyc.jpeg" width="40%">
 </p>
 3. Figure showing smoothing and forecasting 
 <p align="center">
