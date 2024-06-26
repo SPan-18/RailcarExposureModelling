@@ -24,6 +24,8 @@ model{
   	sigma2 = sqrt(1/tau2)
 	Q.prime = Q + eLF*QL + eRF*QR
 	G.prime = (1 - eL*eLF)*G
+	T.end = cyc.end[ncyc]
+	C.avg = G.prime / Q.prime * (1 - ((1/(T.end*Q.prime/V)) * (1 - exp(-(T.end*Q.prime/V)))))
 
 	# priors 
 

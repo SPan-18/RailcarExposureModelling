@@ -16,10 +16,10 @@ Q.prior = list.prior.data$Q.prior       # uniform prior
 m1.prior = c(0, 1E-2)                   # normal prior (mean, precision)
 tau1.prior = c(2, var(list.dat$y))      # IG prior for precision of log(e1)
 tau2.prior = c(band*2, band*var(list.dat$y))  # IG prior for precision of e2
-QL.prior = c(2,10)
-QR.prior = c(2,10)
-eL.prior = c(0.3, 0.7)
-eLF.prior = c(0.3, 0.7)
+QL.prior = c(4, 6)
+QR.prior = c(4, 6)
+eL.prior = c(0.45, 0.55)
+eLF.prior = c(0.45, 0.55)
 eRF.prior = c(0.6, 1)
 
 prior.list = c(list.prior.data, 
@@ -59,12 +59,13 @@ init.values = list(list(G = G.init,
 mod.params = c("G", "Q", "QL", "QR", "eL", "eLF", "eRF", "G.prime", "Q.prime",
                "C", "C.initial", "sigma1", "sigma2", "m1", "loglik")
 
-target_ns = 5000
+# target_ns = 5000
 n_chains = 1
-n_burnin = 5000
+n_burnin = 1000
 n_adapt = 500
 n_thin = 10
-n_iter = (target_ns*n_thin)+n_burnin+n_adapt
+# n_iter = (target_ns*n_thin)+n_burnin+n_adapt
+n_iter = 10000
 
 input.list = c(list.dat, prior.list)
 
@@ -73,12 +74,14 @@ mod1 <- jags.model("../src/model111.mcyc.txt",
                    inits = init.values,
                    n.chains = n_chains, 
                    n.adapt = n_adapt)
+update(mod1, n.iter = n_burnin)
 
 mod.fit <- coda.samples(model = mod1, 
                         variable.names = mod.params, 
                         n.iter = n_iter, thin = n_thin)
 
-post.samp <- as.data.frame(window(mod.fit[[1]], start = n_burnin+1))
+post.samp <- do.call(rbind, mod.fit)
+# post.samp <- as.data.frame(window(mod.fit[[1]], start = n_burnin+1))
 
 C.names <- paste("C[", 1:length(list.dat$y), "]", sep = "")
 C.initial.names <- paste("C.initial[", 1:list.dat$ncyc, "]", sep = "")
@@ -100,6 +103,7 @@ source("../src/printwaic.R")
 
 ######### Make Posterior Learning Plots ###############
 
+post.samples = as.data.frame(post.samples)
 source("../src/plot_postlearn_H111.R")
 
 gridExtra::grid.arrange(plot.G, plot.Q, plot.QL, plot.QR,

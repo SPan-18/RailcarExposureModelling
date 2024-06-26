@@ -9,7 +9,7 @@ source("../src/read-data.r")
 
 ##### Prior parameters #####
 
-band = 5                                # tuning width of uncertainty band
+band = 0.005                            # tuning width of uncertainty band
 G.prior = list.prior.data$G.prior       # uniform prior
 Q.prior = list.prior.data$Q.prior       # uniform prior
 m1.prior = c(0, 1E-2)                   # normal prior (mean, precision)
@@ -99,11 +99,11 @@ source("../src/printwaic.R")
 
 ######### Make Posterior Learning Plots ###############
 
-source("../src/plot2_postlearn_H111.R")
-
-gridExtra::grid.arrange(plot.G, plot.Q, plot.QL, plot.QR,
-                        plot.eL, plot.eLF, plot.eRF, plot.Q.prime,
-                        ncol = 2)
+# source("../src/plot2_postlearn_H111.R")
+# 
+# gridExtra::grid.arrange(plot.G, plot.Q, plot.QL, plot.QR,
+#                         plot.eL, plot.eLF, plot.eRF, plot.Q.prime,
+#                         ncol = 2)
 # bottom = "(Blue: Prior density, Green: Posterior samples; Red tick: True, Yellow: Posterior Mean)"
 
 ###################
@@ -138,8 +138,8 @@ post.mean.C.plot = array(dim = extra.data$explength)
 smooth.mean.plot = array(dim = extra.data$explength)
 for(i in 1:ncyc){
   post.mean.C.plot[input1$cyc.start[i]:input1$cyc.end[i]] = C.summary[list.dat$cyc.start[i]:list.dat$cyc.end[i], 
-                                                                      "Mean"]
-  smooth.mean.plot[input1$cyc.end[i]+0:bglength[i]] = c(C.summary[list.dat$cyc.end[i]], smooth.latent[[i]][,"Mean"])
+                                                                      "50%"]
+  smooth.mean.plot[input1$cyc.end[i]+0:bglength[i]] = c(C.summary[list.dat$cyc.end[i]], smooth.latent[[i]][,"50%"])
 }
 
 smooth.minmax = array(dim = c(ncyc, 2))
@@ -151,7 +151,9 @@ plot.min = min(exp(list.dat$y), C.summary[,"2.5%"], min(smooth.minmax[,1]))
 plot.max = max(exp(list.dat$y), C.summary[,"97.5%"], max(smooth.minmax[,2]))
 
 # Make plot
+jpeg("../fig/fig5a.jpeg", width = 7.5, height = 4, units = "in", res = 300)
 {
+  par(mar = c(4, 4, 0.1, 0.1))
   plot(1:input1$explength, exp(input1$Conc),
        ylim = c(plot.min, plot.max),
        ylab = "Concentration", xlab = "Time", type = "l",
@@ -194,6 +196,8 @@ plot.max = max(exp(list.dat$y), C.summary[,"97.5%"], max(smooth.minmax[,2]))
          # x = 0.85*extra.data$explength, y = 1.05*plot.max, 
          legend = c("Observed data", "Posterior mean", "Smoothing"),
          col = c("darkblue", "darkgreen", "darkred"), 
-         lty = c(1, 1, 1), cex = 0.8, bty = "n", lwd = c(2, 2, 2),
-         y.intersp = 0.5)
+         lty = c(1, 1, 1), cex = 1, bty = "n", lwd = c(2, 2, 2),
+         y.intersp = 0.75)
 }
+fig_label("(a)", font = 2)
+dev.off()

@@ -109,7 +109,9 @@ plot.min = 0
 plot.max = max(exp(list.dat$y), C.summary[,"97.5%"], 
                smooth1.df[,"97.5%"], smooth.dat.1.df[,"97.5%"])
 
+jpeg("../fig/fig4b.jpg", width = 6.7, height = 4.47, units = "in", res = 300)
 {
+par(mar = c(4, 4, 0.1, 0.1))
 plot(1:40, c(exp(list.dat$y), rep(NA, T.end-list.dat$T.obs)), 
      ylim = c(plot.min, plot.max+10),   # -10
      ylab = "Concentration", xlab = "Time",
@@ -154,9 +156,11 @@ polygon(c(list.dat$T.obs:T.end, rev(list.dat$T.obs:T.end)),
         border = F)
 points(1:40, c(rep(NA, list.dat$T.obs), 
                exp(obs1[(list.dat$T.obs+1):T.end])), pch = 4, col = "yellow")
-legend('topright', legend = c("Semi-parametric", "Proposed model"),
+legend(27.5, 60, legend = c("Semi-parametric", "Proposed model"),
        col = c("purple", "darkred"),
        title = "Smoothing", title.font = 2,
-       pch = c(15, 15), cex = 0.6, bty = "n",
-       inset = c(0.06, -0.06), y.intersp = 0.5)
+       pch = c(15, 15), cex = 1, bty = "n",
+       inset = c(0.06, -0.06), y.intersp = 0.75)
 }
+fig_label("(b)", font = 2)
+dev.off()

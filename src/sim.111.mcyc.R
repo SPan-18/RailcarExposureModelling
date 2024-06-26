@@ -120,6 +120,7 @@ true.params = list(G = G,
                    e.L = e.L,
                    e.LF = e.LF,
                    e.RF = e.RF,
+                   Q.prime = Q + e.LF * Q.L + e.RF * Q.R,
                    C0 = C0,
                    sigma1 = sd2)
 

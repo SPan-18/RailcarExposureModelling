@@ -9,7 +9,7 @@ source("../src/read-data.R")
 
 ##### Prior parameters #####
 
-band = 5
+band = 0.005
 G.prior = list.prior.data$G.prior       # uniform prior
 Q.prior = list.prior.data$Q.prior       # uniform prior
 # m1.prior = c(0, 1E-2)                 # normal prior
@@ -56,8 +56,8 @@ init.values = list(list(G = G.init,
                         tau1 = tau1.init,
                         tau2 = tau2.init))
 
-mod.params = c("G", "Q", "QL", "QR", "eL", "eLF", "eRF", "G.prime", "Q.prime",
-               "C", "C.initial", "sigma1", "sigma2", "m1", "loglik",
+mod.params = c("G", "Q", "QL", "QR", "eL", "eLF", "eRF", "G.prime", "Q.prime", 
+               "C.avg", "C", "C.initial", "sigma1", "sigma2", "m1", "loglik",
                "alpha", "beta")
 
 target_ns = 5000
@@ -87,11 +87,48 @@ loglik.names <- paste("loglik[", 1:length(list.dat$y), "]", sep = "")
 param.names <- c("G", "Q", "QL", "QR", "eL", "eLF", "eRF", 
                  "sigma1", "sigma2", "m1", 
                  "alpha", "beta",
-                 "G.prime", "Q.prime")
+                 "G.prime", "Q.prime", "C.avg")
 
 post.samples = post.samp[,param.names]
+post.samples[, "C_steady"] = post.samples[, "G.prime"] / post.samples[, "Q.prime"]
 posterior.summary = ci.df(post.samples)
 print(round(posterior.summary, 2))
+
+thresh_lo = 0.1 * median(post.samples[, "C_steady"])
+thresh_hi = 0.9 * median(post.samples[, "C_steady"])
+time_seq_end = 45
+time_seq = seq(0, time_seq_end, length.out = 1000)
+decay_fn = function(C.start, Q.prime, V, time){
+  return(C.start * exp( - Q.prime/V * time))
+}
+
+decay_out <- apply(post.samples, 1, function(x) decay_fn(C.start = x["C_steady"],
+                                                         Q.prime = x["Q.prime"],
+                                                         V = list.dat$V,
+                                                         time = time_seq))
+decay_ci <- apply(decay_out, 1, function(x) quantile(x, c(0.025, 0.5, 0.975)))
+time_decay <- apply(decay_out, 2, function(x){
+  return(c(time_seq[which.min(abs(x - thresh_lo))]))
+})
+time_ci <- quantile(time_decay, c(0.025, 0.5, 0.975))
+
+jpeg("../fig/fig6.jpeg", width = 6.7, height = 5.58, units = "in", res = 300)
+par(mar = c(par("mar")[1], par("mar")[2] + 0.25, 0.5, 0.5))
+ylimits <- c(min(decay_ci["2.5%", ]), max(decay_ci["97.5%", ]))
+plot(time_seq, decay_ci["50%", ], ylim = ylimits, type = "l",
+     col = "mediumpurple4", lwd = 2, xlab = "Time (minutes)", 
+     ylab = expression(paste("Concentration (mg/", m^3, ")")),
+     panel.first = rect(time_ci[1], -1e6, time_ci[3], 1e6, 
+                        col = adjustcolor("darkgreen", alpha.f = 0.1), 
+                        border=NA))
+polygon(c(time_seq, rev(time_seq)),
+        c(decay_ci["97.5%", ], rev(decay_ci["2.5%", ])),
+        col = adjustcolor("mediumpurple1", alpha.f = 0.3), border = F)
+abline(h = thresh_lo, 
+       col = "gray40", lty = 2, lwd = 1)
+abline(v = time_ci[2], 
+       col = "darkgreen", lty = 3, lwd = 1)
+dev.off()
 
 post.C.initial = post.samp[,C.initial.names]
 C.initial.summary = ci.df(post.C.initial)
@@ -103,11 +140,11 @@ source("../src/printwaic.R")
 
 ######### Make Posterior Learning Plots ###############
 
-source("../src/plot2_postlearn_H111.R")
-
-gridExtra::grid.arrange(plot.G, plot.Q, plot.QL, plot.QR,
-                        plot.eL, plot.eLF, plot.eRF, plot.Q.prime,
-                        ncol = 2)
+# source("../src/plot2_postlearn_H111.R")
+# 
+# gridExtra::grid.arrange(plot.G, plot.Q, plot.QL, plot.QR,
+#                         plot.eL, plot.eLF, plot.eRF, plot.Q.prime,
+#                         ncol = 2)
 
 ###################
 #### Smoothing ####
@@ -145,8 +182,8 @@ post.mean.C.plot = array(dim = extra.data$explength)
 smooth.mean.plot = array(dim = extra.data$explength)
 for(i in 1:ncyc){
   post.mean.C.plot[input1$cyc.start[i]:input1$cyc.end[i]] = C.summary[list.dat$cyc.start[i]:list.dat$cyc.end[i], 
-                                                                      "Mean"]
-  smooth.mean.plot[input1$cyc.end[i]+0:bglength[i]] = c(C.summary[list.dat$cyc.end[i]], smooth.latent[[i]][,"Mean"])
+                                                                      "50%"]
+  smooth.mean.plot[input1$cyc.end[i]+0:bglength[i]] = c(C.summary[list.dat$cyc.end[i]], smooth.latent[[i]][,"50%"])
 }
 
 smooth.minmax = array(dim = c(ncyc, 2))
@@ -158,7 +195,9 @@ plot.min = min(exp(list.dat$y), C.summary[,"2.5%"], min(smooth.minmax[,1]))
 plot.max = max(exp(list.dat$y), C.summary[,"97.5%"], max(smooth.minmax[,2]))
 
 # Make plot
+jpeg("../fig/fig5b.jpeg", width = 7.5, height = 4, units = "in", res = 300)
 {
+  par(mar = c(4, 4, 0.1, 0.1))
   plot(1:input1$explength, exp(input1$Conc),
        ylim = c(plot.min, plot.max),
        ylab = "Concentration", xlab = "Time", type = "l",
@@ -201,7 +240,8 @@ plot.max = max(exp(list.dat$y), C.summary[,"97.5%"], max(smooth.minmax[,2]))
          # x = 0.85*extra.data$explength, y = 1.05*plot.max, 
          legend = c("Observed data", "Posterior mean", "Smoothing"),
          col = c("darkblue", "darkgreen", "darkred"), 
-         lty = c(1, 1, 1), cex = 0.8, bty = "n", lwd = c(2, 2, 2),
-         y.intersp = 0.5)
+         lty = c(1, 1, 1), cex = 1, bty = "n", lwd = c(2, 2, 2),
+         y.intersp = 0.75)
 }
-
+fig_label("(b)", font = 2)
+dev.off()
