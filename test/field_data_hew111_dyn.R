@@ -112,7 +112,7 @@ time_decay <- apply(decay_out, 2, function(x){
 })
 time_ci <- quantile(time_decay, c(0.025, 0.5, 0.975))
 
-jpeg("../fig/fig6.jpeg", width = 6.7, height = 5.58, units = "in", res = 300)
+jpeg("../fig/fig6.jpg", width = 6.7, height = 5.58, units = "in", res = 300)
 par(mar = c(par("mar")[1], par("mar")[2] + 0.25, 0.5, 0.5))
 ylimits <- c(min(decay_ci["2.5%", ]), max(decay_ci["97.5%", ]))
 plot(time_seq, decay_ci["50%", ], ylim = ylimits, type = "l",

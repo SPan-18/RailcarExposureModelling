@@ -42,7 +42,7 @@ obs = c(obs1, obs2, obs3)
 plot.min = min(out)
 plot.max = max(out, obs)+1
 
-jpeg("../fig/fig2.jpg", width = 7, height = 4.5, units = "in", res = 300)
+pdf("../fig/fig2.pdf", width = 7, height = 4.5)
 par(mar = c(4, 4, 0.1, 0.1))
 plot(out, type = "l", col = "darkred", lwd = 2, 
      ylim = c(plot.min, plot.max),
